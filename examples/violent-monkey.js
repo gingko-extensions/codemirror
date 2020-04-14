@@ -20,7 +20,7 @@
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/search/match-highlighter.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/search/search.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/search/searchcursor.min.js
-// @require  https://gist.githubusercontent.com/JanSurft/290e53180101a929a4433328f7d089d8/raw/d2a14f0b84cdbd5ad10afb6415647a11dcb95a33/gingko-app_codemirror.js
+// @require  https://cdn.jsdelivr.net/gh/JanSurft/gingko-codemirror/src/gingko-codemirror.js
 // @include  https://gingkoapp.com/*
 // @run-at   document-idle
 // ==/UserScript==
