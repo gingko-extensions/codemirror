@@ -16,62 +16,62 @@ function until(conditionFunction) {
 }
 
 function addCodemirror(card_id, textarea, fullscreen) {
-    let original_textarea = document
-        .querySelector(card_id)
-        .querySelector(".mousetrap");
+    // let original_textarea = document
+    //     .querySelector(card_id)
+    //     .querySelector(".mousetrap");
 
-    // if there is already a codemirror instance wrapping return immediately
-    if ($(textarea).siblings(".CodeMirror").length > 0) {
-        console.log("there is already a codemirror");
+    // // if there is already a codemirror instance wrapping return immediately
+    // if ($(textarea).siblings(".CodeMirror").length > 0) {
+    //     console.log("there is already a codemirror");
 
-        let cm = $(textarea).siblings(".CodeMirror").get(0).CodeMirror;
-        let cursor = cm.getCursor();
-        cm.setValue(original_textarea.value);
-        cm.setCursor(cursor);
-        cm.focus();
-        return;
-    }
+    //     let cm = $(textarea).siblings(".CodeMirror").get(0).CodeMirror;
+    //     let cursor = cm.getCursor();
+    //     cm.setValue(original_textarea.value);
+    //     cm.setCursor(cursor);
+    //     cm.focus();
+    //     return;
+    // }
 
-    console.log("new codemirror instance");
+    // console.log("new codemirror instance");
 
     // if there is a textarea without a CodeMirror wrapped around
     // add the codemirror wrapper and style it accordingly
-    if (textarea) {
-        let codeMirrorWrapper = CodeMirror.fromTextArea(textarea, {
-            mode: "markdown",
-            lineWrapping: true,
-            matchBrackets: true,
-            scrollbarStyle: "null",
-            theme: mytheme,
-            fullScreen: fullscreen,
-            keyMap: "vim",
-            autofocus: true,
-            extraKeys: {
-                F11: function (cm) {
-                    cm.setOption("fullScreen", !cm.getOption("fullScreen"));
-                },
-                Esc: function (cm) {
-                    if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
-                },
-                // "Ctrl-Enter": cm =>
+    let codeMirrorWrapper = CodeMirror.fromTextArea(textarea, {
+        mode: "markdown",
+        lineWrapping: true,
+        matchBrackets: true,
+        scrollbarStyle: "null",
+        theme: mytheme,
+        fullScreen: fullscreen,
+        keyMap: "vim",
+        autofocus: true,
+        extraKeys: {
+            F11: function (cm) {
+                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
             },
-        });
-        codeMirrorWrapper.setSize(null, null);
+            Esc: function (cm) {
+                if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+            },
+            // "Ctrl-Enter": cm =>
+        },
+    });
+    codeMirrorWrapper.setSize(null, null);
 
-        // reflect changes in the codemirror instance in the
-        // wrapped textarea, so that changes get for
-        codeMirrorWrapper.on("change", function (cm, _change) {
-            // console.log(cm.getTextArea());
-            // console.log(original_textarea);
-            cm.save();
-            document
-                .querySelector(card_id)
-                .querySelector(".mousetrap").value = cm.getValue();
+    // reflect changes in the codemirror instance in the
+    // wrapped textarea, so that changes get for
+    codeMirrorWrapper.on("change", function (cm, _change) {
+    // console.log(cm.getTextArea());
+    // console.log(original_textarea);
+        cm.save();
+        document
+            .querySelector(card_id)
+            .querySelector(".mousetrap").value = cm.getValue();
 
-            // cm.getTextArea().value = cm.getValue();
-            // original_textarea.value = cm.getValue();
-        });
-    }
+    // cm.getTextArea().value = cm.getValue();
+    // original_textarea.value = cm.getValue();
+    });
+
+    return codeMirrorWrapper;
 }
 
 let isFullscreen = false;
@@ -130,12 +130,12 @@ async function create_editor(id) {
     editors.set(id, codemirror);
 }
 
-async function close_editor(id) {
+function close_editor(id) {
     let editor = editors.get(id);
     editor.toTextArea();
 }
 
-async function save_editor(id) {
+function save_editor(id) {
     let editor = editors.get(id);
     editor.save();
 }
