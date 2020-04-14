@@ -1,3 +1,5 @@
+/* global CodeMirror Backbone */
+
 let editor_cursors = new Map();
 
 const mytheme = "base16-light";
@@ -54,7 +56,7 @@ function addCodemirror(card_id, textarea, fullscreen) {
 
         // reflect changes in the codemirror instance in the
         // wrapped textarea, so that changes get for
-        codeMirrorWrapper.on("change", function (cm, change) {
+        codeMirrorWrapper.on("change", function (cm, _change) {
             // console.log(cm.getTextArea());
             // console.log(original_textarea);
             cm.save();
@@ -100,22 +102,22 @@ async function waitForBackbone() {
         onEdit(id);
     });
 
-    Backbone.on("key:editFullscreen", (id) => {
+    Backbone.on("key:editFullscreen", (_id) => {
         isFullscreen = true;
     });
 
-    Backbone.on("key:fullscreen", (id) => {
+    Backbone.on("key:fullscreen", (_id) => {
         console.log("toggle fullscreen to " + !isFullscreen);
         isFullscreen = !isFullscreen;
     });
 
-    Backbone.on("card:save", (id) => {
+    Backbone.on("card:save", (_id) => {
         console.log("saved");
     // isFullscreen = false;
     });
 }
 
-function run() {
+function _run() {
     waitForBackbone();
 
     CodeMirror.Vim.defineEx("q", null, function (cm) {

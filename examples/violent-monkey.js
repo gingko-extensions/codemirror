@@ -49,23 +49,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-'use strict';
+/* globals _run */
+
+"use strict";
 
 // Styling of the CodeMirror section
-const cssTxt = GM_getResourceText ("CODEMIRROR_CSS");
-GM_addStyle (cssTxt);
+const cssTxt = GM_getResourceText("CODEMIRROR_CSS");
+GM_addStyle(cssTxt);
 
-const cssTheme = GM_getResourceText ("BASE16_LIGHT");
-GM_addStyle (cssTheme);
+const cssTheme = GM_getResourceText("BASE16_LIGHT");
+GM_addStyle(cssTheme);
 
-const cssDialog = GM_getResourceText ("DIALOG");
-GM_addStyle (cssDialog);
-
-
+const cssDialog = GM_getResourceText("DIALOG");
+GM_addStyle(cssDialog);
 
 // Make resizing possible and move the save-button
 // downwards (only temporarily solution)
-GM_addStyle ( `
+GM_addStyle(`
 .CodeMirror-fullscreen {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
@@ -86,12 +86,9 @@ GM_addStyle ( `
 .CodeMirror-sizer {
   margin-bottom: 0 !important;
 }
-`
-            );
+`);
 
 // run on document loaded
-(function() {
-
-  run();
-
+(function () {
+    _run();
 })();
