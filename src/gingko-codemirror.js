@@ -30,6 +30,8 @@ function addCodemirror(card_id, textarea, fullscreen) {
         return;
     }
 
+    console.log("new codemirror instance");
+
     // if there is a textarea without a CodeMirror wrapped around
     // add the codemirror wrapper and style it accordingly
     if (textarea) {
@@ -122,12 +124,14 @@ function _run() {
 
     CodeMirror.Vim.defineEx("q", null, function (cm) {
         cm.display.input.blur();
-        /* cm.toTextArea(); */ Backbone.trigger("key:cancel");
+        cm.toTextArea();
+        Backbone.trigger("key:cancel");
     });
     CodeMirror.Vim.defineEx("wq", null, function (cm) {
         cm.save();
         cm.display.input.blur();
-        /* cm.toTextArea(); */ Backbone.trigger("key:save");
+        cm.toTextArea();
+        Backbone.trigger("key:save");
     });
     CodeMirror.Vim.defineEx("w", null, function (cm) {
         cm.save();
