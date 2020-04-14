@@ -108,9 +108,9 @@ function set_editing(id, val) {
     console.log("editing: " + val);
 }
 
-function set_fullscreen(val) {
-    focus_fullscreen = val;
-    console.log("fullscreen: " + val);
+function enable_fullscreen() {
+    focus_fullscreen = true;
+    console.log("fullscreen: " + true);
 }
 
 function toggle_fullscreen() {
@@ -131,8 +131,8 @@ async function create_editor(id) {
 }
 
 function close_editor(id) {
-    let editor = editors.get(id);
-    editor.toTextArea();
+    // let editor = editors.get(id);
+    // editor.toTextArea();
 }
 
 function save_editor(id) {
@@ -157,7 +157,7 @@ async function waitForBackbone() {
     });
 
     Backbone.on("key:editFullscreen", (_) => {
-        set_fullscreen(true);
+        enable_fullscreen();
     });
 
     Backbone.on("key:fullscreen", (_) => {
@@ -182,31 +182,8 @@ function _run() {
     CodeMirror.Vim.defineEx("w", null, function (cm) {
         Backbone.trigger("key:save");
         Backbone.trigger("key:edit");
-    // cm.save();
-    // let cursor = cm.getCursor();
-    // let fullscreen = isFullscreen;
-    // Backbone.trigger("key:save");
-    // Backbone.trigger("key:edit");
-    // if (isFullscreen) {
-    //     isFullscreen = false;
-    //     Backbone.trigger("key:fullscreen");
-    // }
-    // // isFullscreen = fullscreen;
-    // cm.focus();
     });
     CodeMirror.Vim.map("jk", "<Esc>l", "insert");
 
     CodeMirror.Vim.map(",s", ":w<CR><Esc>", "insert");
-
-    /*
-  CodeMirror.Vim.map(',s', '', 'insert');
-  CodeMirror.Vim.map(',s', ':', 'normal');
-  CodeMirror.Vim.map('<Space>q', ':q<CR>', 'normal');
-  CodeMirror.Vim.map('\,q', ':q<CR>', 'normal');
-  CodeMirror.Vim.map(',q', ':q<CR>', 'insert');
-  CodeMirror.Vim.map('\,q', ':q<CR>', 'visual');
-  */
-
-    unsafeWindow.codemirror = CodeMirror;
-    // CodeMirror.Vim.noremap('jk', '<Esc>', 'insert');
 }
