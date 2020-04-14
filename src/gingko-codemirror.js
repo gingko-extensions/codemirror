@@ -1,6 +1,8 @@
 /* global CodeMirror Backbone */
 
-let editor_cursors = new Map();
+let editor_states = new Map();
+let editors = new Map();
+let focus_fullscreen = false;
 
 const mytheme = "base16-light";
 
@@ -97,25 +99,69 @@ async function onEdit(id) {
     addCodemirror("#card" + id, editing_textarea, isFullscreen);
 }
 
+function set_editing(id, val) {
+    if (!editor_states.has(id)) {
+        editor_states.set(id, { editing: false, fullscreen: false });
+    }
+    editor_states.get(id).editing = val;
+
+    console.log("editing: " + val);
+}
+
+function set_fullscreen(val) {
+    focus_fullscreen = val;
+    console.log("fullscreen: " + val);
+}
+
+function toggle_fullscreen() {
+    focus_fullscreen = !focus_fullscreen;
+    console.log("fullscreen: " + focus_fullscreen);
+}
+
+async function create_editor(id) {
+    let card = document.querySelector("#card" + id);
+
+    await until(() => card.querySelector("textarea"));
+
+    let textarea = card.querySelector("textarea");
+
+    let codemirror = addCodemirror("#card" + id, textarea, false);
+
+    editors.set(id, codemirror);
+}
+
+async function close_editor(id) {
+    let editor = editors.get(id);
+    editor.toTextArea();
+}
+
+async function save_editor(id) {
+    let editor = editors.get(id);
+    editor.save();
+}
+
 async function waitForBackbone() {
     await until(() => typeof Backbone !== "undefined");
 
     Backbone.on("card:edit", (id) => {
-        onEdit(id);
+        create_editor(id);
     });
 
-    Backbone.on("key:editFullscreen", (_id) => {
-        isFullscreen = true;
+    Backbone.on("card:save", (id) => {
+        save_editor(id);
+        close_editor(id);
     });
 
-    Backbone.on("key:fullscreen", (_id) => {
-        console.log("toggle fullscreen to " + !isFullscreen);
-        isFullscreen = !isFullscreen;
+    Backbone.on("card:cancel", (id) => {
+        close_editor(id);
     });
 
-    Backbone.on("card:save", (_id) => {
-        console.log("saved");
-    // isFullscreen = false;
+    Backbone.on("key:editFullscreen", (_) => {
+        set_fullscreen(true);
+    });
+
+    Backbone.on("key:fullscreen", (_) => {
+        toggle_fullscreen();
     });
 }
 
@@ -123,29 +169,30 @@ function _run() {
     waitForBackbone();
 
     CodeMirror.Vim.defineEx("q", null, function (cm) {
-        cm.display.input.blur();
-        cm.toTextArea();
+    // cm.display.input.blur();
+    // cm.toTextArea();
         Backbone.trigger("key:cancel");
     });
     CodeMirror.Vim.defineEx("wq", null, function (cm) {
-        cm.save();
-        cm.display.input.blur();
-        cm.toTextArea();
+    // cm.save();
+    // cm.display.input.blur();
+    // cm.toTextArea();
         Backbone.trigger("key:save");
     });
     CodeMirror.Vim.defineEx("w", null, function (cm) {
-        cm.save();
-        // let cursor = cm.getCursor();
-        // let fullscreen = isFullscreen;
         Backbone.trigger("key:save");
         Backbone.trigger("key:edit");
-
-        if (isFullscreen) {
-            isFullscreen = false;
-            Backbone.trigger("key:fullscreen");
-        }
-        // isFullscreen = fullscreen;
-        cm.focus();
+    // cm.save();
+    // let cursor = cm.getCursor();
+    // let fullscreen = isFullscreen;
+    // Backbone.trigger("key:save");
+    // Backbone.trigger("key:edit");
+    // if (isFullscreen) {
+    //     isFullscreen = false;
+    //     Backbone.trigger("key:fullscreen");
+    // }
+    // // isFullscreen = fullscreen;
+    // cm.focus();
     });
     CodeMirror.Vim.map("jk", "<Esc>l", "insert");
 
