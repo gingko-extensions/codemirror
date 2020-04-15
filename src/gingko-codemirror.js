@@ -46,7 +46,7 @@ class Editor {
     }
 
     save_history() {
-        this.history = this.editiro.getDoc().getHistory();
+        this.history = this.editor.getDoc().getHistory();
     }
 }
 
