@@ -95,7 +95,7 @@ class EditorManager {
 
     create_editor(id) {
         if (!this.editors.has(id)) {
-            const instance = Editor(id, this.config, this.is_fullscreen());
+            const instance = new Editor(id, this.config, this.is_fullscreen());
             this.editors.set(id, instance);
         }
 
@@ -373,7 +373,7 @@ async function waitForAndRun(condition, run) {
 }
 
 function setupBackboneEvents(config) {
-    const editor_manager = EditorManager(config);
+    const editor_manager = new EditorManager(config);
 
     Backbone.on("card:edit", (id) => {
         editor_manager.create_editor(id);
