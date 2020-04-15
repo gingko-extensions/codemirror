@@ -29,6 +29,12 @@ function create_codemirror(textarea, config) {
         keyMap: config.keyMap,
         autofocus: true,
         extraKeys: {
+            "Shift-F8": function (cm) {
+                let new_theme = window.prompt("Current theme", cm.getOption("theme"));
+
+                cm.setOption("theme", new_theme);
+            },
+
             F9: function (cm) {
                 const theme = config.themes[config.themeIdx];
                 cm.setOption("theme", theme);
@@ -60,8 +66,10 @@ function create_fullscreen_codemirror(cm, textarea, config) {
         keyMap: config.keyMap,
         autofocus: true,
         extraKeys: {
-            "Shift-F8": function (_cm) {
-                window.prompt("Current theme", config.themes[config.themeIdx]);
+            "Shift-F8": function (cm) {
+                let new_theme = window.prompt("Current theme", cm.getOption("theme"));
+
+                cm.setOption("theme", new_theme);
             },
             F8: function (cm) {
                 cm.setOption("fullScreen", !cm.getOption("fullScreen"));
