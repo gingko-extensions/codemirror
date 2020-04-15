@@ -63,7 +63,12 @@ function create_fullscreen_codemirror(cm, textarea, config) {
             F11: function (cm) {
                 cm.setOption("fullScreen", !cm.getOption("fullScreen"));
             },
-            "Ctrl-t": function (cm) {
+            "Ctrl-Alt-t": function (cm) {
+                const theme = config.themes[config.themeIdx];
+                cm.setOption("theme", theme);
+                config.themeIdx = (config.themeIdx + 1) % config.themes.length;
+            },
+            F9: function (cm) {
                 const theme = config.themes[config.themeIdx];
                 cm.setOption("theme", theme);
                 config.themeIdx = (config.themeIdx + 1) % config.themes.length;
