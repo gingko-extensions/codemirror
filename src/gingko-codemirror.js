@@ -29,7 +29,7 @@ function create_codemirror(textarea, config) {
         keyMap: config.keyMap,
         autofocus: true,
         extraKeys: {
-            "Ctrl-t": function (cm) {
+            F9: function (cm) {
                 const theme = config.themes[config.themeIdx];
                 cm.setOption("theme", theme);
                 config.themeIdx = (config.themeIdx + 1) % config.themes.length;
@@ -62,11 +62,6 @@ function create_fullscreen_codemirror(cm, textarea, config) {
         extraKeys: {
             F11: function (cm) {
                 cm.setOption("fullScreen", !cm.getOption("fullScreen"));
-            },
-            "Ctrl-Alt-t": function (cm) {
-                const theme = config.themes[config.themeIdx];
-                cm.setOption("theme", theme);
-                config.themeIdx = (config.themeIdx + 1) % config.themes.length;
             },
             F9: function (cm) {
                 const theme = config.themes[config.themeIdx];
