@@ -103,6 +103,7 @@ async function create_editor(id, config) {
 
     if (typeof editors.get(id) !== "undefined") {
         codemirror = editors.get(id);
+        codemirror.focus();
     } else {
         codemirror = create_codemirror(textarea, config);
         editors.set(id, codemirror);
