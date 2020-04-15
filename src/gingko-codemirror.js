@@ -45,18 +45,18 @@ function create_fullscreen_codemirror(cm, textarea, config) {
         matchBrackets: true,
         scrollbarStyle: "null",
         theme: config.theme,
-        fullScreen: false,
+        fullScreen: true,
         keyMap: config.keyMap,
         autofocus: true,
-    // extraKeys: {
-    //     F11: function (cm) {
-    //         cm.setOption("fullScreen", !cm.getOption("fullScreen"));
-    //     },
-    //     Esc: function (cm) {
-    //         if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
-    //     },
-    //     // "Ctrl-Enter": cm =>
-    // },
+        extraKeys: {
+            F11: function (cm) {
+                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+            },
+            // Esc: function (cm) {
+            //     if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+            // },
+            // "Ctrl-Enter": cm =>
+        },
     });
 
     codeMirror.swapDoc(linked_doc);
