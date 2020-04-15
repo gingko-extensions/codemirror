@@ -1,7 +1,8 @@
 /* global CodeMirror Backbone */
 
-let editor_states = new Map();
 let editors = new Map();
+let fullscreen_editors = new Map();
+
 let focus_fullscreen = false;
 let active_card = null;
 
@@ -60,15 +61,8 @@ function create_fullscreen_codemirror(cm, textarea, config) {
     });
 
     codeMirror.swapDoc(linked_doc);
-}
 
-function set_editing(id, val) {
-    if (!editor_states.has(id)) {
-        editor_states.set(id, { editing: false, fullscreen: false });
-    }
-    editor_states.get(id).editing = val;
-
-    console.log("editing: " + val);
+    return codeMirror;
 }
 
 function enable_fullscreen() {
@@ -88,27 +82,56 @@ function is_fullscreen() {
     return focus_fullscreen;
 }
 
+function get_editor(id) {
+    return editors.get(id);
+}
+
+function get_fullscreen_editor(id) {
+    return fullscreen_editors.get(id);
+}
+
+function set_fullscreen_editor(id, cm) {
+    fullscreen_editors.set(id, cm);
+}
+
 async function create_editor(id, config) {
     const card = document.querySelector("#card" + id);
     await until(() => card.querySelector("textarea"));
 
     const textarea = card.querySelector("textarea");
-    const codemirror = create_codemirror(textarea, config);
+    let codemirror = null;
+
+    if (typeof editors.get(id) !== "undefined") {
+        codemirror = editors.get(id);
+    } else {
+        codemirror = create_codemirror(textarea, config);
+        editors.set(id, codemirror);
+    }
 
     if (is_fullscreen()) {
-        const fullscreen_container = document.querySelector(
-            ".fullscreen-container"
-        );
+        let fullscreen_editor = get_fullscreen_editor(id);
 
-        await until(() => fullscreen_container.querySelector("textarea"));
-        let fullscreen_textarea = fullscreen_container.querySelector("textarea");
+        if (typeof fullscreen_editor !== "undefined") {
+            fullscreen_editor.focus();
+        } else {
+            const fullscreen_container = document.querySelector(
+                ".fullscreen-container"
+            );
 
-        create_fullscreen_codemirror(codemirror, fullscreen_textarea, config);
+            await until(() => fullscreen_container.querySelector("textarea"));
+            let fullscreen_textarea = fullscreen_container.querySelector("textarea");
+
+            fullscreen_editor = create_fullscreen_codemirror(
+                codemirror,
+                fullscreen_textarea,
+                config
+            );
+            set_fullscreen_editor(id, fullscreen_editor);
+        }
     }
-    editors.set(id, codemirror);
 }
 
-function close_editor(id) {
+function close_editor(_id) {
     // let editor = editors.get(id);
     // editor.toTextArea();
 }
