@@ -3,8 +3,7 @@
 let editor_states = new Map();
 let editors = new Map();
 let focus_fullscreen = false;
-
-const mytheme = "base16-light";
+let active_card = null;
 
 function until(conditionFunction) {
     const poll = (resolve) => {
@@ -15,88 +14,52 @@ function until(conditionFunction) {
     return new Promise(poll);
 }
 
-function addCodemirror(card_id, textarea, fullscreen, config) {
-    // let original_textarea = document
-    //     .querySelector(card_id)
-    //     .querySelector(".mousetrap");
-
-    // // if there is already a codemirror instance wrapping return immediately
-    // if ($(textarea).siblings(".CodeMirror").length > 0) {
-    //     console.log("there is already a codemirror");
-
-    //     let cm = $(textarea).siblings(".CodeMirror").get(0).CodeMirror;
-    //     let cursor = cm.getCursor();
-    //     cm.setValue(original_textarea.value);
-    //     cm.setCursor(cursor);
-    //     cm.focus();
-    //     return;
-    // }
-
-    // console.log("new codemirror instance");
-
-    // if there is a textarea without a CodeMirror wrapped around
-    // add the codemirror wrapper and style it accordingly
-    let codeMirrorWrapper = CodeMirror.fromTextArea(textarea, {
+function create_codemirror(textarea, config) {
+    const codeMirrorWrapper = CodeMirror.fromTextArea(textarea, {
         mode: "markdown",
         lineWrapping: true,
         matchBrackets: true,
         scrollbarStyle: "null",
         theme: config.theme,
-        fullScreen: fullscreen,
+        fullScreen: false,
         keyMap: config.keyMap,
         autofocus: true,
-        extraKeys: {
-            F11: function (cm) {
-                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
-            },
-            Esc: function (cm) {
-                if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
-            },
-            // "Ctrl-Enter": cm =>
-        },
     });
     codeMirrorWrapper.setSize(null, null);
 
     // reflect changes in the codemirror instance in the
     // wrapped textarea, so that changes get for
     codeMirrorWrapper.on("change", function (cm, _change) {
-    // console.log(cm.getTextArea());
-    // console.log(original_textarea);
         cm.save();
-        document
-            .querySelector(card_id)
-            .querySelector(".mousetrap").value = cm.getValue();
-
-    // cm.getTextArea().value = cm.getValue();
-    // original_textarea.value = cm.getValue();
     });
 
     return codeMirrorWrapper;
 }
 
-let isFullscreen = false;
+function create_fullscreen_codemirror(cm, textarea, config) {
+    const linked_doc = cm.getDoc().linkedDoc({ sharedHist: true });
 
-async function onEdit(id) {
-    let editing_container = null;
-    let original_container = null;
+    const codeMirror = CodeMirror.fromTextArea(textarea, {
+        mode: "markdown",
+        lineWrapping: true,
+        matchBrackets: true,
+        scrollbarStyle: "null",
+        theme: config.theme,
+        fullScreen: false,
+        keyMap: config.keyMap,
+        autofocus: true,
+    // extraKeys: {
+    //     F11: function (cm) {
+    //         cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+    //     },
+    //     Esc: function (cm) {
+    //         if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+    //     },
+    //     // "Ctrl-Enter": cm =>
+    // },
+    });
 
-    if (isFullscreen) {
-        console.log("do fullscreen");
-        editing_container = document.querySelector(".fullscreen-container");
-    } else {
-        console.log("no fullscreen");
-        editing_container = document.querySelector("#card" + id);
-    }
-
-    original_container = document.querySelector("#card" + id);
-
-    await until(() => editing_container.querySelector("textarea"));
-    await until(() => original_container.querySelector("textarea"));
-
-    let editing_textarea = editing_container.querySelector("textarea");
-    let original_textarea = original_container.querySelector("textarea");
-
-    addCodemirror("#card" + id, editing_textarea, isFullscreen);
+    codeMirror.swapDoc(linked_doc);
 }
 
 function set_editing(id, val) {
@@ -116,17 +79,32 @@ function enable_fullscreen() {
 function toggle_fullscreen() {
     focus_fullscreen = !focus_fullscreen;
     console.log("fullscreen: " + focus_fullscreen);
+
+    const cm = editors.get(get_active());
+    cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+}
+
+function is_fullscreen() {
+    return focus_fullscreen;
 }
 
 async function create_editor(id, config) {
-    let card = document.querySelector("#card" + id);
-
+    const card = document.querySelector("#card" + id);
     await until(() => card.querySelector("textarea"));
 
-    let textarea = card.querySelector("textarea");
+    const textarea = card.querySelector("textarea");
+    const codemirror = create_codemirror(textarea, config);
 
-    let codemirror = addCodemirror("#card" + id, textarea, false, config);
+    if (is_fullscreen()) {
+        const fullscreen_container = document.querySelector(
+            ".fullscreen-container"
+        );
 
+        await until(() => fullscreen_container.querySelector("textarea"));
+        let fullscreen_textarea = fullscreen_container.querySelector("textarea");
+
+        create_fullscreen_codemirror(codemirror, fullscreen_textarea, config);
+    }
     editors.set(id, codemirror);
 }
 
@@ -136,8 +114,16 @@ function close_editor(id) {
 }
 
 function save_editor(id) {
-    let editor = editors.get(id);
+    const editor = editors.get(id);
     editor.save();
+}
+
+function set_active(id) {
+    active_card = id;
+}
+
+function get_active() {
+    return active_card;
 }
 
 async function waitForAndRun(condition, run) {
@@ -148,6 +134,7 @@ async function waitForAndRun(condition, run) {
 function backboneEvents(config) {
     Backbone.on("card:edit", (id) => {
         create_editor(id, config);
+        set_active(id);
     });
 
     Backbone.on("card:save", (id) => {
