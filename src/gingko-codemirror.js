@@ -1,5 +1,7 @@
 /* global CodeMirror Backbone */
 
+export default run;
+
 let editors = new Map();
 let fullscreen_editors = new Map();
 
@@ -234,7 +236,7 @@ function backboneEvents(config) {
     });
 }
 
-function _run(config, init) {
+function run(config, init) {
     waitForAndRun(
         () => typeof Backbone !== "undefined",
         () => {
