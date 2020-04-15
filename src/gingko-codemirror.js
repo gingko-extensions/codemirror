@@ -84,6 +84,7 @@ class Editor {
 
 class EditorManager {
     constructor(config) {
+        console.log("create editor manager");
         this.config = config;
         this.editors = new Map();
         this.fullscreen_editors = new Map();
@@ -104,6 +105,8 @@ class EditorManager {
         }
 
         this.active_id = id;
+
+        console.log(this.editors);
 
         return this.editors.get(id);
     }
