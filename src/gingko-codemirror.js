@@ -15,7 +15,7 @@ function until(conditionFunction) {
     return new Promise(poll);
 }
 
-function addCodemirror(card_id, textarea, fullscreen) {
+function addCodemirror(card_id, textarea, fullscreen, config) {
     // let original_textarea = document
     //     .querySelector(card_id)
     //     .querySelector(".mousetrap");
@@ -41,9 +41,9 @@ function addCodemirror(card_id, textarea, fullscreen) {
         lineWrapping: true,
         matchBrackets: true,
         scrollbarStyle: "null",
-        theme: mytheme,
+        theme: config.theme,
         fullScreen: fullscreen,
-        keyMap: "vim",
+        keyMap: config.keyMap,
         autofocus: true,
         extraKeys: {
             F11: function (cm) {
@@ -118,14 +118,14 @@ function toggle_fullscreen() {
     console.log("fullscreen: " + focus_fullscreen);
 }
 
-async function create_editor(id) {
+async function create_editor(id, config) {
     let card = document.querySelector("#card" + id);
 
     await until(() => card.querySelector("textarea"));
 
     let textarea = card.querySelector("textarea");
 
-    let codemirror = addCodemirror("#card" + id, textarea, false);
+    let codemirror = addCodemirror("#card" + id, textarea, false, config);
 
     editors.set(id, codemirror);
 }
@@ -140,11 +140,14 @@ function save_editor(id) {
     editor.save();
 }
 
-async function waitForBackbone() {
-    await until(() => typeof Backbone !== "undefined");
+async function waitForAndRun(condition, run) {
+    await until();
+    run();
+}
 
+function backboneEvents(config) {
     Backbone.on("card:edit", (id) => {
-        create_editor(id);
+        create_editor(id, config);
     });
 
     Backbone.on("card:save", (id) => {
@@ -165,25 +168,13 @@ async function waitForBackbone() {
     });
 }
 
-function _run() {
-    waitForBackbone();
+function _run(config, init) {
+    waitForAndRun(
+        () => typeof Backbone !== "undefined",
+        () => {
+            backboneEvents(config);
+        }
+    );
 
-    CodeMirror.Vim.defineEx("q", null, function (cm) {
-    // cm.display.input.blur();
-    // cm.toTextArea();
-        Backbone.trigger("key:cancel");
-    });
-    CodeMirror.Vim.defineEx("wq", null, function (cm) {
-    // cm.save();
-    // cm.display.input.blur();
-    // cm.toTextArea();
-        Backbone.trigger("key:save");
-    });
-    CodeMirror.Vim.defineEx("w", null, function (cm) {
-        Backbone.trigger("key:save");
-        Backbone.trigger("key:edit");
-    });
-    CodeMirror.Vim.map("jk", "<Esc>l", "insert");
-
-    CodeMirror.Vim.map(",s", ":w<CR><Esc>", "insert");
+    init();
 }
