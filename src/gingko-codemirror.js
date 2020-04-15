@@ -141,7 +141,7 @@ function save_editor(id) {
 }
 
 async function waitForAndRun(condition, run) {
-    await until();
+    await until(condition);
     run();
 }
 
