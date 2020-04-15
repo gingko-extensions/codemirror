@@ -153,6 +153,9 @@ async function create_editor(id, config) {
     if (is_fullscreen()) {
         create_fullscreen_editor(id, config);
     }
+
+    save_history(id);
+    save_content(id);
 }
 
 function load_content(id) {
