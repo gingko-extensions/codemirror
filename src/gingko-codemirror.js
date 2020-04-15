@@ -108,6 +108,10 @@ function set_fullscreen_editor(id, cm) {
     fullscreen_editors.set(id, cm);
 }
 
+function remove_fullscreen_editor(id) {
+    fullscreen_editors.delete(id);
+}
+
 async function create_fullscreen_editor(id, config) {
     const codemirror = get_editor(id);
 
@@ -183,6 +187,13 @@ function close_editor(id) {
 
     editor.getDoc().setValue(content);
     editor.setHistory(history);
+
+    const fullscreen_editor = get_fullscreen_editor(id);
+
+    if (typeof fullscreen_editor !== "undefined") {
+        fullscreen_editor.toTextArea();
+        remove_fullscreen_editor(id);
+    }
     // let editor = editors.get(id);
     // editor.toTextArea();
 }
