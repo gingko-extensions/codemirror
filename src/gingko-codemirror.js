@@ -245,8 +245,4 @@ function run(config, init) {
     init();
 }
 
-const go = (config, init) => {
-    run(config, init);
-};
-
-export default go;
+window.run = run;
