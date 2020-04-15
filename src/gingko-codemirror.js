@@ -60,7 +60,7 @@ function create_fullscreen_codemirror(cm, textarea, config) {
         keyMap: config.keyMap,
         autofocus: true,
         extraKeys: {
-            F11: function (cm) {
+            F8: function (cm) {
                 cm.setOption("fullScreen", !cm.getOption("fullScreen"));
             },
             F9: function (cm) {
