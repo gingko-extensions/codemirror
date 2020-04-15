@@ -223,8 +223,9 @@ function save_cursor(id) {
 function close_editor(id) {
     const content = load_content(id);
     const history = load_history(id);
-    const cursor = load_cursor(id);
     const editor = get_editor(id);
+
+    const cursor = editor.getDoc().getCursor();
 
     editor.getDoc().setValue(content);
     editor.setHistory(history);
