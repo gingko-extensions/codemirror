@@ -10,43 +10,131 @@ let focus_fullscreen = false;
 let active_card = null;
 
 class Editor {
-    constructor(id, config) {
+    constructor(id, config, fullscreen = false) {
         this.id = id;
         this.config = config;
 
-        this.instanciate();
+        this.editor = this.instanciate();
+        this.fullscreen_editor = null;
+
+        if (fullscreen) {
+            this.fullscreen_editor = this.instanciate_fullscreen();
+        }
+        this.save_history();
+        this.save_content();
     }
+
     async instanciate() {
         const card = document.querySelector("#card" + this.id);
         await until(() => card.querySelector("textarea"));
 
         const textarea = card.querySelector("textarea");
-        let codemirror = null;
+        let codemirror = create_codemirror(textarea, this.config);
+        return codemirror;
+    }
 
-        if (typeof editors.get(this.id) !== "undefined") {
-            codemirror = editors.get(this.id);
-            codemirror.focus();
-        } else {
-            codemirror = create_codemirror(textarea, this.config);
-            editors.set(this.id, codemirror);
+    async istanciate_fullscreen() {
+        console.log("create new fullscreen editor");
+        const fullscreen_container = document.querySelector(
+            ".fullscreen-container"
+        );
+
+        await until(() => fullscreen_container.querySelector("textarea"));
+        let fullscreen_textarea = fullscreen_container.querySelector("textarea");
+
+        return create_fullscreen_codemirror(
+            this.editor,
+            fullscreen_textarea,
+            this.config
+        );
+    }
+
+    close() {
+        const content = this.load_content();
+        const history = this.load_history();
+        const editor = this.editor();
+
+        editor.getDoc().setValue(content);
+        editor.setHistory(history);
+
+        const fullscreen_editor = this.fullscreen_editor;
+
+        if (fullscreen_editor) {
+            fullscreen_editor.toTextArea();
+            remove_fullscreen_editor(this.id);
         }
+    }
 
-        if (is_fullscreen()) {
-            create_fullscreen_editor(this.id, this.config);
-        }
-
+    save() {
+        this.editor.save();
         this.save_history();
         this.save_content();
     }
 
+    save_content() {
+        this.content = this.editor.getDoc().getValue();
+    }
+
     save_history() {
-    // this.history =
+        this.history = this.editiro.getDoc().getHistory();
     }
 }
 
-class EditorFactory {
+class EditorManager {
     constructor(config) {
         this.config = config;
+        this.editors = new Map();
+        this.fullscreen_editors = new Map();
+
+        this.STORED_CONTENT = new Map();
+        this.STORED_HISTORY = new Map();
+
+        this.focus_fullscreen = false;
+        this.active_id = null;
+    }
+
+    create_editor(id) {
+        if (!this.editors.has(id)) {
+            const instance = Editor(id, this.config, this.is_fullscreen());
+            this.editors.set(id, instance);
+        }
+
+        this.active_id = id;
+
+        return this.editors.get(id);
+    }
+
+    save_editor(id) {
+        this.editors.get(id).save();
+    }
+
+    close_editor(id) {
+        this.editors.get(id).close();
+        this.disable_fullscreen();
+    }
+
+    toggle_fullscreen(id) {
+        this.editors.get(id).make_fullscreen();
+    }
+
+    is_fullscreen() {
+        return this.focus_fullscreen;
+    }
+
+    get(id) {
+        return this.editors.get(id);
+    }
+
+    get_active() {
+        return this.get(this.active_id);
+    }
+
+    enable_fullscreen() {
+        this.focus_fullscreen = true;
+    }
+
+    disable_fullscreen() {
+        this.focus_fullscreen = false;
     }
 }
 
@@ -285,29 +373,28 @@ async function waitForAndRun(condition, run) {
 }
 
 function setupBackboneEvents(config) {
-    const editor_factory = EditorFactory(config);
+    const editor_manager = EditorManager(config);
 
     Backbone.on("card:edit", (id) => {
-        editor_factory.new_instance(id);
-        // create_editor(id, config);
-        editor_factory.set_active(id);
+        editor_manager.create_editor(id);
+        editor_manager.set_active(id);
     });
 
     Backbone.on("card:save", (id) => {
-        save_editor(id);
-        close_editor(id);
+        editor_manager.save_editor(id);
+        editor_manager.close_editor(id);
     });
 
     Backbone.on("card:cancel", (id) => {
-        close_editor(id);
+        editor_manager.close_editor(id);
     });
 
     Backbone.on("key:editFullscreen", (_) => {
-        enable_fullscreen();
+        editor_manager.enable_fullscreen();
     });
 
     Backbone.on("key:fullscreen", (_) => {
-        toggle_fullscreen(get_active(), config);
+        editor_manager.get_active().toggle_fullscreen();
     });
 }
 
