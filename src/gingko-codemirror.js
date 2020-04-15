@@ -87,6 +87,12 @@ function enable_fullscreen() {
     console.log("set fullscreen to " + focus_fullscreen);
 }
 
+function disable_fullscreen() {
+    focus_fullscreen = false;
+
+    console.log("set fullscreen to " + focus_fullscreen);
+}
+
 function toggle_fullscreen(id, config) {
     focus_fullscreen = !focus_fullscreen;
 
@@ -200,6 +206,7 @@ function close_editor(id) {
         fullscreen_editor.toTextArea();
         remove_fullscreen_editor(id);
     }
+    disable_fullscreen();
     // let editor = editors.get(id);
     // editor.toTextArea();
 }
