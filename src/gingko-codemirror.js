@@ -83,10 +83,14 @@ function create_fullscreen_codemirror(cm, textarea, config) {
 
 function enable_fullscreen() {
     focus_fullscreen = true;
+
+    console.log("set fullscreen to " + focus_fullscreen);
 }
 
 function toggle_fullscreen(id, config) {
     focus_fullscreen = !focus_fullscreen;
+
+    console.log("set fullscreen to " + focus_fullscreen);
     if (is_fullscreen()) {
         create_fullscreen_editor(id, config);
     }
