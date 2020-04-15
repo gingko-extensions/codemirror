@@ -1,7 +1,5 @@
 /* global CodeMirror Backbone */
 
-export default run;
-
 let editors = new Map();
 let fullscreen_editors = new Map();
 
@@ -246,3 +244,9 @@ function run(config, init) {
 
     init();
 }
+
+const go = (config, init) => {
+    run(config, init);
+};
+
+export default go;
