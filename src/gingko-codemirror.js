@@ -121,8 +121,10 @@ async function create_fullscreen_editor(id, config) {
     let fullscreen_editor = get_fullscreen_editor(id);
 
     if (typeof fullscreen_editor !== "undefined") {
+        console.log("focus existing fullscreen editor");
         fullscreen_editor.focus();
     } else {
+        console.log("create new fullscreen editor");
         const fullscreen_container = document.querySelector(
             ".fullscreen-container"
         );
