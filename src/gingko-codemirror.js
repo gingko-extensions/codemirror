@@ -67,15 +67,13 @@ function create_fullscreen_codemirror(cm, textarea, config) {
 
 function enable_fullscreen() {
     focus_fullscreen = true;
-    console.log("fullscreen: " + true);
 }
 
-function toggle_fullscreen() {
+function toggle_fullscreen(id, config) {
     focus_fullscreen = !focus_fullscreen;
-    console.log("fullscreen: " + focus_fullscreen);
-
-    const cm = editors.get(get_active());
-    cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+    if (is_fullscreen()) {
+        create_fullscreen_editor(id, config);
+    }
 }
 
 function is_fullscreen() {
@@ -94,6 +92,33 @@ function set_fullscreen_editor(id, cm) {
     fullscreen_editors.set(id, cm);
 }
 
+async function create_fullscreen_editor(id, config) {
+    const codemirror = get_editor(id);
+
+    if (typeof codemirror === "undefined") {
+        throw "reference editor must be defined";
+    }
+    let fullscreen_editor = get_fullscreen_editor(id);
+
+    if (typeof fullscreen_editor !== "undefined") {
+        fullscreen_editor.focus();
+    } else {
+        const fullscreen_container = document.querySelector(
+            ".fullscreen-container"
+        );
+
+        await until(() => fullscreen_container.querySelector("textarea"));
+        let fullscreen_textarea = fullscreen_container.querySelector("textarea");
+
+        fullscreen_editor = create_fullscreen_codemirror(
+            codemirror,
+            fullscreen_textarea,
+            config
+        );
+        set_fullscreen_editor(id, fullscreen_editor);
+    }
+}
+
 async function create_editor(id, config) {
     const card = document.querySelector("#card" + id);
     await until(() => card.querySelector("textarea"));
@@ -110,25 +135,7 @@ async function create_editor(id, config) {
     }
 
     if (is_fullscreen()) {
-        let fullscreen_editor = get_fullscreen_editor(id);
-
-        if (typeof fullscreen_editor !== "undefined") {
-            fullscreen_editor.focus();
-        } else {
-            const fullscreen_container = document.querySelector(
-                ".fullscreen-container"
-            );
-
-            await until(() => fullscreen_container.querySelector("textarea"));
-            let fullscreen_textarea = fullscreen_container.querySelector("textarea");
-
-            fullscreen_editor = create_fullscreen_codemirror(
-                codemirror,
-                fullscreen_textarea,
-                config
-            );
-            set_fullscreen_editor(id, fullscreen_editor);
-        }
+        create_fullscreen_editor(id, config);
     }
 }
 
@@ -175,7 +182,7 @@ function backboneEvents(config) {
     });
 
     Backbone.on("key:fullscreen", (_) => {
-        toggle_fullscreen();
+        toggle_fullscreen(get_active(), config);
     });
 }
 
