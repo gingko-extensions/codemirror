@@ -55,11 +55,14 @@ function create_fullscreen_codemirror(cm, textarea, config) {
         lineWrapping: true,
         matchBrackets: true,
         scrollbarStyle: "null",
-        theme: config.theme,
+        theme: config.themes[config.themeIdx],
         fullScreen: true,
         keyMap: config.keyMap,
         autofocus: true,
         extraKeys: {
+            "Shift-F8": function (_cm) {
+                window.prompt("Current theme", config.themes[config.themeIdx]);
+            },
             F8: function (cm) {
                 cm.setOption("fullScreen", !cm.getOption("fullScreen"));
             },
