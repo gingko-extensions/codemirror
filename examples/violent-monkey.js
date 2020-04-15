@@ -1,26 +1,29 @@
 // ==UserScript==
-// @name     gingko-codemirror
+// @name     1_Codemirror-markdown
 // @version  1
 // @grant    GM_getResourceText
 // @grant    GM_addStyle
 // @resource CODEMIRROR_CSS https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css
 // @resource MDN_LIKE https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/mdn-like.min.css
+// @resource MONOKAI https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/monokai.min.css
 // @resource ELEGANT https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/elegant.min.css
 // @resource BASE16_LIGHT https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/base16-light.min.css
+// @resource MATERIAL_PALENIGHT https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/material-palenight.min.css
+// @resource BESPIN https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/bespin.min.css
 // @resource CODE_STYLE https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/mdn-like.min.css
 // @resource DIALOG https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/dialog/dialog.min.css
 // @resource MATCHESONSCROLLBAR https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/search/matchesonscrollbar.min.css
-// @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.js
+// @require  https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js
+// @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/markdown/markdown.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/display/fullscreen.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/keymap/vim.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/dialog/dialog.min.js
-// @require  https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/search/jump-to-line.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/search/match-highlighter.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/search/search.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/search/searchcursor.min.js
-// @require  https://cdn.jsdelivr.net/gh/JanSurft/gingko-codemirror/src/gingko-codemirror.js
+// @require  https://cdn.jsdelivr.net/gh/JanSurft/gingko-codemirror@0.1.0/src/gingko-codemirror.js
 // @include  https://gingkoapp.com/*
 // @run-at   document-idle
 // ==/UserScript==
@@ -49,7 +52,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-/* globals _run */
+/* global run CodeMirror Backbone */
 
 "use strict";
 
@@ -57,7 +60,22 @@ SOFTWARE.
 const cssTxt = GM_getResourceText("CODEMIRROR_CSS");
 GM_addStyle(cssTxt);
 
-const cssTheme = GM_getResourceText("BASE16_LIGHT");
+let cssTheme = GM_getResourceText("BASE16_LIGHT");
+GM_addStyle(cssTheme);
+
+cssTheme = GM_getResourceText("MATERIAL_PALENIGHT");
+GM_addStyle(cssTheme);
+
+cssTheme = GM_getResourceText("BESPIN");
+GM_addStyle(cssTheme);
+
+cssTheme = GM_getResourceText("ELEGANT");
+GM_addStyle(cssTheme);
+
+cssTheme = GM_getResourceText("MDN_LIKE");
+GM_addStyle(cssTheme);
+
+cssTheme = GM_getResourceText("MONOKAI");
 GM_addStyle(cssTheme);
 
 const cssDialog = GM_getResourceText("DIALOG");
@@ -88,7 +106,46 @@ GM_addStyle(`
 }
 `);
 
+function vim_init() {
+    CodeMirror.Vim.defineEx("q", null, function (_cm) {
+    // cm.display.input.blur();
+    // cm.toTextArea();
+        Backbone.trigger("key:cancel");
+    });
+    CodeMirror.Vim.defineEx("wq", null, function (_cm) {
+    // cm.save();
+    // cm.display.input.blur();
+    // cm.toTextArea();
+        Backbone.trigger("key:save");
+    });
+    CodeMirror.Vim.defineEx("w", null, function (_cm) {
+        Backbone.trigger("key:save");
+        Backbone.trigger("key:edit");
+    });
+    CodeMirror.Vim.map("jk", "<Esc>l", "insert");
+
+    CodeMirror.Vim.map(",s", ":w<CR><Esc>", "insert");
+}
+
 // run on document loaded
 (function () {
-    _run();
+    // window.prompt("Choose your theme", "default");
+
+    run(
+        {
+            theme: "default",
+            keyMap: "vim",
+            themes: [
+                "default",
+                "monokai",
+                "base16-light",
+                "material-palenight",
+                "bespin",
+                "elegant",
+                "mnd-like",
+            ],
+            themeIdx: 0,
+        },
+        vim_init
+    );
 })();
