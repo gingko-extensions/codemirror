@@ -33,14 +33,6 @@ function create_codemirror(textarea, config) {
                 let new_theme = window.prompt("Current theme", cm.getOption("theme"));
 
                 cm.setOption("theme", new_theme);
-
-                // for (const editor of editors.values()) {
-                //     editor.setOption("theme", new_theme);
-                // }
-
-                // for (const editor of fullscreen_editors.values()) {
-                //     editor.setOption("theme", new_theme);
-                // }
                 config.theme = new_theme;
             },
 
@@ -48,12 +40,6 @@ function create_codemirror(textarea, config) {
                 const theme = config.themes[config.themeIdx];
                 cm.setOption("theme", theme);
 
-                // for (const editor of editors.values()) {
-                //     editor.setOption("theme", theme);
-                // }
-                // for (const editor of fullscreen_editors.values()) {
-                //     editor.setOption("theme", theme);
-                // }
                 config.theme = theme;
                 config.themeIdx = (config.themeIdx + 1) % config.themes.length;
             },
@@ -87,13 +73,6 @@ function create_fullscreen_codemirror(cm, textarea, config) {
                 let new_theme = window.prompt("Current theme", cm.getOption("theme"));
                 cm.setOption("theme", new_theme);
 
-                // for (const editor of editors.values()) {
-                //     editor.setOption("theme", new_theme);
-                // }
-
-                // for (const editor of fullscreen_editors.values()) {
-                //     editor.setOption("theme", new_theme);
-                // }
                 config.theme = new_theme;
             },
 
@@ -101,23 +80,12 @@ function create_fullscreen_codemirror(cm, textarea, config) {
                 const theme = config.themes[config.themeIdx];
                 cm.setOption("theme", theme);
 
-                // for (const editor of editors.values()) {
-                //     editor.setOption("theme", theme);
-                // }
-                // for (const editor of fullscreen_editors.values()) {
-                //     editor.setOption("theme", theme);
-                // }
                 config.theme = theme;
                 config.themeIdx = (config.themeIdx + 1) % config.themes.length;
             },
             F9: function (cm) {
                 cm.setOption("fullScreen", !cm.getOption("fullScreen"));
             },
-
-            // Esc: function (cm) {
-            //     if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
-            // },
-            // "Ctrl-Enter": cm =>
         },
     });
 
