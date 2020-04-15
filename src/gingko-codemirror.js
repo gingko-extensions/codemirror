@@ -90,8 +90,6 @@ class EditorManager {
     }
 
     async create_editor(id) {
-        console.log(this.editors);
-
         if (!this.editors.has(id)) {
             const cm = await this.instanciate(id);
             let cm_full = null;
@@ -106,8 +104,6 @@ class EditorManager {
         }
 
         this.active_id = id;
-
-        console.log(this.editors);
 
         return this.editors.get(id);
     }
