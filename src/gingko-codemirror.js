@@ -32,15 +32,15 @@ function create_codemirror(textarea, config) {
             "Shift-F8": function (cm) {
                 let new_theme = window.prompt("Current theme", cm.getOption("theme"));
 
-                // cm.setOption("theme", new_theme);
+                cm.setOption("theme", new_theme);
 
-                for (const editor of editors.values()) {
-                    editor.setOption("theme", new_theme);
-                }
+                // for (const editor of editors.values()) {
+                //     editor.setOption("theme", new_theme);
+                // }
 
-                for (const editor of fullscreen_editors.values()) {
-                    editor.setOption("theme", new_theme);
-                }
+                // for (const editor of fullscreen_editors.values()) {
+                //     editor.setOption("theme", new_theme);
+                // }
                 config.theme = new_theme;
             },
 
@@ -48,12 +48,12 @@ function create_codemirror(textarea, config) {
                 const theme = config.themes[config.themeIdx];
                 cm.setOption("theme", theme);
 
-                for (const editor of editors.values()) {
-                    editor.setOption("theme", theme);
-                }
-                for (const editor of fullscreen_editors.values()) {
-                    editor.setOption("theme", theme);
-                }
+                // for (const editor of editors.values()) {
+                //     editor.setOption("theme", theme);
+                // }
+                // for (const editor of fullscreen_editors.values()) {
+                //     editor.setOption("theme", theme);
+                // }
                 config.theme = theme;
                 config.themeIdx = (config.themeIdx + 1) % config.themes.length;
             },
@@ -85,16 +85,15 @@ function create_fullscreen_codemirror(cm, textarea, config) {
         extraKeys: {
             "Shift-F8": function (cm) {
                 let new_theme = window.prompt("Current theme", cm.getOption("theme"));
+                cm.setOption("theme", new_theme);
 
-                // cm.setOption("theme", new_theme);
+                // for (const editor of editors.values()) {
+                //     editor.setOption("theme", new_theme);
+                // }
 
-                for (const editor of editors.values()) {
-                    editor.setOption("theme", new_theme);
-                }
-
-                for (const editor of fullscreen_editors.values()) {
-                    editor.setOption("theme", new_theme);
-                }
+                // for (const editor of fullscreen_editors.values()) {
+                //     editor.setOption("theme", new_theme);
+                // }
                 config.theme = new_theme;
             },
 
@@ -102,12 +101,12 @@ function create_fullscreen_codemirror(cm, textarea, config) {
                 const theme = config.themes[config.themeIdx];
                 cm.setOption("theme", theme);
 
-                for (const editor of editors.values()) {
-                    editor.setOption("theme", theme);
-                }
-                for (const editor of fullscreen_editors.values()) {
-                    editor.setOption("theme", theme);
-                }
+                // for (const editor of editors.values()) {
+                //     editor.setOption("theme", theme);
+                // }
+                // for (const editor of fullscreen_editors.values()) {
+                //     editor.setOption("theme", theme);
+                // }
                 config.theme = theme;
                 config.themeIdx = (config.themeIdx + 1) % config.themes.length;
             },
@@ -174,10 +173,13 @@ async function create_fullscreen_editor(id, config) {
     if (typeof codemirror === "undefined") {
         throw "reference editor must be defined";
     }
+
+    codemirror.setOption("theme", config.theme);
     let fullscreen_editor = get_fullscreen_editor(id);
 
     if (typeof fullscreen_editor !== "undefined") {
         console.log("focus existing fullscreen editor");
+        fullscreen_editor.setOption("theme", config.theme);
         fullscreen_editor.focus();
     } else {
         console.log("create new fullscreen editor");
@@ -206,6 +208,7 @@ async function create_editor(id, config) {
 
     if (typeof editors.get(id) !== "undefined") {
         codemirror = editors.get(id);
+        codemirror.setOption("theme", config.theme);
         codemirror.focus();
     } else {
         codemirror = create_codemirror(textarea, config);
