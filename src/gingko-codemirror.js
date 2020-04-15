@@ -32,12 +32,20 @@ function create_codemirror(textarea, config) {
             "Shift-F8": function (cm) {
                 let new_theme = window.prompt("Current theme", cm.getOption("theme"));
 
-                cm.setOption("theme", new_theme);
+                // cm.setOption("theme", new_theme);
+
+                for (const editor of editors.values()) {
+                    editor.setOption("theme", new_theme);
+                }
             },
 
-            F9: function (cm) {
+            F8: function (cm) {
                 const theme = config.themes[config.themeIdx];
                 cm.setOption("theme", theme);
+
+                for (const editor of editors.values()) {
+                    editor.setOption("theme", theme);
+                }
                 config.themeIdx = (config.themeIdx + 1) % config.themes.length;
             },
         },
@@ -69,15 +77,24 @@ function create_fullscreen_codemirror(cm, textarea, config) {
             "Shift-F8": function (cm) {
                 let new_theme = window.prompt("Current theme", cm.getOption("theme"));
 
-                cm.setOption("theme", new_theme);
+                // cm.setOption("theme", new_theme);
+
+                for (const editor of editors.values()) {
+                    editor.setOption("theme", new_theme);
+                }
             },
+
             F8: function (cm) {
-                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
-            },
-            F9: function (cm) {
                 const theme = config.themes[config.themeIdx];
                 cm.setOption("theme", theme);
+
+                for (const editor of editors.values()) {
+                    editor.setOption("theme", theme);
+                }
                 config.themeIdx = (config.themeIdx + 1) % config.themes.length;
+            },
+            F9: function (cm) {
+                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
             },
 
             // Esc: function (cm) {
