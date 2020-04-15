@@ -28,6 +28,13 @@ function create_codemirror(textarea, config) {
         fullScreen: false,
         keyMap: config.keyMap,
         autofocus: true,
+        extraKeys: {
+            "Ctrl-t": function (cm) {
+                const theme = config.themes[config.themeIdx];
+                cm.setOption("theme", theme);
+                config.themeIdx = (config.themeIdx + 1) % 6;
+            },
+        },
     });
     codeMirrorWrapper.setSize(null, null);
 
@@ -56,6 +63,12 @@ function create_fullscreen_codemirror(cm, textarea, config) {
             F11: function (cm) {
                 cm.setOption("fullScreen", !cm.getOption("fullScreen"));
             },
+            "Ctrl-t": function (cm) {
+                const theme = config.themes[config.themeIdx];
+                cm.setOption("theme", theme);
+                config.themeIdx = (config.themeIdx + 1) % 6;
+            },
+
             // Esc: function (cm) {
             //     if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
             // },
