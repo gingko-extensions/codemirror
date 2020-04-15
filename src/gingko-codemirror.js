@@ -37,6 +37,11 @@ function create_codemirror(textarea, config) {
                 for (const editor of editors.values()) {
                     editor.setOption("theme", new_theme);
                 }
+
+                for (const editor of fullscreen_editors.values()) {
+                    editor.setOption("theme", new_theme);
+                }
+                config.theme = new_theme;
             },
 
             F8: function (cm) {
@@ -46,6 +51,10 @@ function create_codemirror(textarea, config) {
                 for (const editor of editors.values()) {
                     editor.setOption("theme", theme);
                 }
+                for (const editor of fullscreen_editors.values()) {
+                    editor.setOption("theme", theme);
+                }
+                config.theme = theme;
                 config.themeIdx = (config.themeIdx + 1) % config.themes.length;
             },
         },
@@ -69,7 +78,7 @@ function create_fullscreen_codemirror(cm, textarea, config) {
         lineWrapping: true,
         matchBrackets: true,
         scrollbarStyle: "null",
-        theme: config.themes[config.themeIdx],
+        theme: config.theme,
         fullScreen: true,
         keyMap: config.keyMap,
         autofocus: true,
@@ -82,6 +91,11 @@ function create_fullscreen_codemirror(cm, textarea, config) {
                 for (const editor of editors.values()) {
                     editor.setOption("theme", new_theme);
                 }
+
+                for (const editor of fullscreen_editors.values()) {
+                    editor.setOption("theme", new_theme);
+                }
+                config.theme = new_theme;
             },
 
             F8: function (cm) {
@@ -91,6 +105,10 @@ function create_fullscreen_codemirror(cm, textarea, config) {
                 for (const editor of editors.values()) {
                     editor.setOption("theme", theme);
                 }
+                for (const editor of fullscreen_editors.values()) {
+                    editor.setOption("theme", theme);
+                }
+                config.theme = theme;
                 config.themeIdx = (config.themeIdx + 1) % config.themes.length;
             },
             F9: function (cm) {
