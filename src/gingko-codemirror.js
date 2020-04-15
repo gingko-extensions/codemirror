@@ -11,6 +11,7 @@ let active_card = null;
 
 class Editor {
     constructor(id, config, fullscreen = false) {
+        console.log("create new editor");
         this.id = id;
         this.config = config;
 
