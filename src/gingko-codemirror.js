@@ -10,44 +10,12 @@ let focus_fullscreen = false;
 let active_card = null;
 
 class Editor {
-    constructor(id, config, fullscreen = false) {
+    constructor(id, cm, cm_full) {
         console.log("create new editor");
         this.id = id;
-        this.config = config;
 
-        this.editor = this.instanciate();
-        this.fullscreen_editor = null;
-
-        if (fullscreen) {
-            this.fullscreen_editor = this.instanciate_fullscreen();
-        }
-        this.save_history();
-        this.save_content();
-    }
-
-    async instanciate() {
-        const card = document.querySelector("#card" + this.id);
-        await until(() => card.querySelector("textarea"));
-
-        const textarea = card.querySelector("textarea");
-        let codemirror = create_codemirror(textarea, this.config);
-        return codemirror;
-    }
-
-    async istanciate_fullscreen() {
-        console.log("create new fullscreen editor");
-        const fullscreen_container = document.querySelector(
-            ".fullscreen-container"
-        );
-
-        await until(() => fullscreen_container.querySelector("textarea"));
-        let fullscreen_textarea = fullscreen_container.querySelector("textarea");
-
-        return create_fullscreen_codemirror(
-            this.editor,
-            fullscreen_textarea,
-            this.config
-        );
+        this.editor = cm;
+        this.fullscreen_editor = cm_full;
     }
 
     close() {
@@ -96,11 +64,44 @@ class EditorManager {
         this.active_id = null;
     }
 
-    create_editor(id) {
+    async instanciate(id) {
+        const card = document.querySelector("#card" + id);
+        await until(() => card.querySelector("textarea"));
+
+        const textarea = card.querySelector("textarea");
+        let codemirror = create_codemirror(textarea, this.config);
+        return codemirror;
+    }
+
+    async istanciate_fullscreen(editor) {
+        console.log("create new fullscreen editor");
+        const fullscreen_container = document.querySelector(
+            ".fullscreen-container"
+        );
+
+        await until(() => fullscreen_container.querySelector("textarea"));
+        let fullscreen_textarea = fullscreen_container.querySelector("textarea");
+
+        return create_fullscreen_codemirror(
+            editor,
+            fullscreen_textarea,
+            this.config
+        );
+    }
+
+    async create_editor(id) {
         console.log(this.editors);
 
         if (!this.editors.has(id)) {
-            const instance = new Editor(id, this.config, this.is_fullscreen());
+            const cm = await this.instanciate(id);
+            let cm_full = null;
+
+            if (this.is_fullscreen()) {
+                cm_full = await this.instanciate_fullscreen(cm);
+            }
+
+            const instance = new Editor(id, cm, cm_full);
+            instance.save();
             this.editors.set(id, instance);
         }
 
