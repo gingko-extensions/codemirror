@@ -5,6 +5,7 @@ let fullscreen_editors = new Map();
 
 const STORED_CONTENT = new Map();
 const STORED_HISTORY = new Map();
+const STORED_CURSOR = new Map();
 
 let focus_fullscreen = false;
 let active_card = null;
@@ -189,6 +190,7 @@ async function create_editor(id, config) {
 
     save_history(id);
     save_content(id);
+    save_cursor(id);
 }
 
 function load_content(id) {
@@ -197,6 +199,10 @@ function load_content(id) {
 
 function load_history(id) {
     return STORED_HISTORY.get(id);
+}
+
+function load_cursor(id) {
+    return STORED_CURSOR.get(id);
 }
 
 function save_content(id) {
@@ -209,13 +215,20 @@ function save_history(id) {
     STORED_HISTORY.set(id, history);
 }
 
+function save_cursor(id) {
+    const cursor = get_editor(id).getDoc().getCursor();
+    STORED_CURSOR.set(id, cursor);
+}
+
 function close_editor(id) {
     const content = load_content(id);
     const history = load_history(id);
+    const cursor = load_cursor(id);
     const editor = get_editor(id);
 
     editor.getDoc().setValue(content);
     editor.setHistory(history);
+    editor.setCursor(cursor);
 
     const fullscreen_editor = get_fullscreen_editor(id);
 
@@ -234,6 +247,7 @@ function save_editor(id) {
 
     save_history(id);
     save_content(id);
+    save_cursor(id);
 }
 
 function set_active(id) {
