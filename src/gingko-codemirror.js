@@ -32,7 +32,7 @@ function create_codemirror(textarea, config) {
             "Ctrl-t": function (cm) {
                 const theme = config.themes[config.themeIdx];
                 cm.setOption("theme", theme);
-                config.themeIdx = (config.themeIdx + 1) % 6;
+                config.themeIdx = (config.themeIdx + 1) % config.themes.length;
             },
         },
     });
@@ -66,7 +66,7 @@ function create_fullscreen_codemirror(cm, textarea, config) {
             "Ctrl-t": function (cm) {
                 const theme = config.themes[config.themeIdx];
                 cm.setOption("theme", theme);
-                config.themeIdx = (config.themeIdx + 1) % 6;
+                config.themeIdx = (config.themeIdx + 1) % config.themes.length;
             },
 
             // Esc: function (cm) {
