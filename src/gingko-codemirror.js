@@ -9,6 +9,47 @@ const STORED_HISTORY = new Map();
 let focus_fullscreen = false;
 let active_card = null;
 
+class Editor {
+    constructor(id, config) {
+        this.id = id;
+        this.config = config;
+
+        this.instanciate();
+    }
+    async instanciate() {
+        const card = document.querySelector("#card" + this.id);
+        await until(() => card.querySelector("textarea"));
+
+        const textarea = card.querySelector("textarea");
+        let codemirror = null;
+
+        if (typeof editors.get(this.id) !== "undefined") {
+            codemirror = editors.get(this.id);
+            codemirror.focus();
+        } else {
+            codemirror = create_codemirror(textarea, this.config);
+            editors.set(this.id, codemirror);
+        }
+
+        if (is_fullscreen()) {
+            create_fullscreen_editor(this.id, this.config);
+        }
+
+        this.save_history();
+        this.save_content();
+    }
+
+    save_history() {
+    // this.history =
+    }
+}
+
+class EditorFactory {
+    constructor(config) {
+        this.config = config;
+    }
+}
+
 function until(conditionFunction) {
     const poll = (resolve) => {
         if (conditionFunction()) resolve();
@@ -243,10 +284,13 @@ async function waitForAndRun(condition, run) {
     run();
 }
 
-function backboneEvents(config) {
+function setupBackboneEvents(config) {
+    const editor_factory = EditorFactory(config);
+
     Backbone.on("card:edit", (id) => {
-        create_editor(id, config);
-        set_active(id);
+        editor_factory.new_instance(id);
+        // create_editor(id, config);
+        editor_factory.set_active(id);
     });
 
     Backbone.on("card:save", (id) => {
@@ -271,7 +315,7 @@ function run(config, init) {
     waitForAndRun(
         () => typeof Backbone !== "undefined",
         () => {
-            backboneEvents(config);
+            setupBackboneEvents(config);
         }
     );
 
