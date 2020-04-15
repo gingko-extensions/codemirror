@@ -3,6 +3,9 @@
 let editors = new Map();
 let fullscreen_editors = new Map();
 
+const STORED_CONTENT = new Map();
+const STORED_HISTORY = new Map();
+
 let focus_fullscreen = false;
 let active_card = null;
 
@@ -139,7 +142,31 @@ async function create_editor(id, config) {
     }
 }
 
-function close_editor(_id) {
+function load_content(id) {
+    return STORED_CONTENT.get(id);
+}
+
+function load_history(id) {
+    return STORED_HISTORY.get(id);
+}
+
+function save_content(id) {
+    const content = get_editor(id).getDoc().getValue();
+    STORED_CONTENT.set(id, content);
+}
+
+function save_history(id) {
+    const history = get_editor(id).getDoc().getHistory();
+    STORED_HISTORY.set(id, history);
+}
+
+function close_editor(id) {
+    const content = load_content(id);
+    const history = load_history(id);
+    const editor = get_editor(id);
+
+    editor.getDoc().setValue(content);
+    editor.setHistory(history);
     // let editor = editors.get(id);
     // editor.toTextArea();
 }
@@ -147,6 +174,9 @@ function close_editor(_id) {
 function save_editor(id) {
     const editor = editors.get(id);
     editor.save();
+
+    save_history(id);
+    save_content(id);
 }
 
 function set_active(id) {
