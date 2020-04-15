@@ -63,6 +63,7 @@ class Editor {
         if (fullscreen_editor) {
             fullscreen_editor.toTextArea();
             remove_fullscreen_editor(this.id);
+            this.fullscreen_editor = null;
         }
     }
 
@@ -95,6 +96,8 @@ class EditorManager {
     }
 
     create_editor(id) {
+        console.log(this.editors);
+
         if (!this.editors.has(id)) {
             const instance = new Editor(id, this.config, this.is_fullscreen());
             this.editors.set(id, instance);
@@ -373,9 +376,7 @@ async function waitForAndRun(condition, run) {
     run();
 }
 
-function setupBackboneEvents(config) {
-    const editor_manager = new EditorManager(config);
-
+function setupBackboneEvents(editor_manager) {
     Backbone.on("card:edit", (id) => {
         editor_manager.create_editor(id);
         editor_manager.set_active(id);
@@ -400,10 +401,12 @@ function setupBackboneEvents(config) {
 }
 
 function run(config, init) {
+    const editor_manager = new EditorManager(config);
+
     waitForAndRun(
         () => typeof Backbone !== "undefined",
         () => {
-            setupBackboneEvents(config);
+            setupBackboneEvents(editor_manager);
         }
     );
 
