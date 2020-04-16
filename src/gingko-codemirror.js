@@ -78,20 +78,74 @@ class CodeMirrorManager {
     }
 }
 
-EditorManager.active_card = null;
-EditorManager.editors = new Map();
-EditorManager.fullscreen_editors = new Map();
-EditorManager.stored_history = new Map();
-EditorManager.stored_content = new Map();
-EditorManager.stored_cursor = new Map();
-EditorManager.codemirror_manager = CodeMirrorManager;
-EditorManager.focus_fullscreen = false;
-EditorManager.config = null;
 class EditorManager {
     constructor() {}
 
+    static init() {
+        this.active_card = null;
+        this.editors = new Map();
+        this.fullscreen_editors = new Map();
+        this.stored_history = new Map();
+        this.stored_content = new Map();
+        this.stored_cursor = new Map();
+        this.codemirror_manager = CodeMirrorManager;
+        this.focus_fullscreen = false;
+        this.config = null;
+    }
+    static get active_card() {
+        return this._active_card;
+    }
+    static set active_card(val) {
+        this._active_card = val;
+    }
+
+    static get fullscreen_editors() {
+        return this._fullscreen_editors;
+    }
+    static set fullscreen_editors(val) {
+        this._fullscreen_editors = val;
+    }
+
+    static get stored_content() {
+        return this._stored_content;
+    }
+    static set stored_content(val) {
+        this._stored_content = val;
+    }
+    static get stored_cursor() {
+        return this._stored_cursor;
+    }
+    static set stored_cursor(val) {
+        this._stored_cursor = val;
+    }
+    static get codemirror_manager() {
+        return this._codemirror_manager;
+    }
+    static set codemirror_manager(val) {
+        this._codemirror_manager = val;
+    }
+    static get focus_fullscreen() {
+        return this._focus_fullscreen;
+    }
+    static set focus_fullscreen(val) {
+        this._focus_fullscreen = val;
+    }
+    static get config() {
+        return this._config;
+    }
+    static set config(val) {
+        this._config = val;
+    }
+
     static get_codemirror_manager() {
         return this.codemirror_manager;
+    }
+
+    static get stored_history() {
+        return this._stored_history;
+    }
+    static set stored_history(val) {
+        this._stored_history = val;
     }
 
     static toggle_fullscreen() {
@@ -322,6 +376,7 @@ function backboneEvents(config, editor_manager) {
 }
 
 function run(config, init) {
+    EditorManager.init();
     waitForAndRun(
         () => typeof Backbone !== "undefined",
         () => {
