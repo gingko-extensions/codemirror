@@ -275,14 +275,9 @@ function until(conditionFunction) {
 
 function vim_init() {
     CodeMirror.Vim.defineEx("q", null, function (_cm) {
-    // cm.display.input.blur();
-    // cm.toTextArea();
         Backbone.trigger("key:cancel");
     });
     CodeMirror.Vim.defineEx("wq", null, function (_cm) {
-    // cm.save();
-    // cm.display.input.blur();
-    // cm.toTextArea();
         Backbone.trigger("key:save");
     });
     CodeMirror.Vim.defineEx("w", null, function (_cm) {
