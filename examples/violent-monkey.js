@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name     gingko-codemirror
-// @version  0.3.3
+// @version  0.3.4
 // @grant    GM_getResourceText
 // @grant    GM_addStyle
 // @resource CODEMIRROR_CSS https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.32.0/codemirror.min.css
