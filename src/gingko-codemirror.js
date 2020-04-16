@@ -387,4 +387,4 @@ function run(config, init) {
     init();
 }
 
-window.run = run;
+window.run_codemirror = run;

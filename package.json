@@ -1,6 +1,6 @@
 {
   "name": "gingko-codemirror",
-  "version": "0.0.1",
+  "version": "0.3.3",
   "description": "turn gingkoapp editors into codemirror editors",
   "main": "index.js",
   "directories": {
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/JanSurft/gingko-codemirror.git"
+    "url": "git+https://github.com/gingko-extensions/codemirror.git"
   },
   "keywords": [
     "gingko"
@@ -19,7 +19,7 @@
   "author": "Jan Hermes",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/JanSurft/gingko-codemirror/issues"
+    "url": "https://github.com/gingko-extensions/codemirror/issues"
   },
-  "homepage": "https://github.com/JanSurft/gingko-codemirror#readme"
+  "homepage": "https://github.com/gingko-extensions/codemirror#readme"
 }

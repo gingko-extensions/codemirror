@@ -79,7 +79,7 @@
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/search/match-highlighter.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/search/search.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/search/searchcursor.min.js
-// @require  https://cdn.jsdelivr.net/gh/JanSurft/gingko-codemirror@0.1.11/src/gingko-codemirror.js
+// @require  https://cdn.jsdelivr.net/gh/JanSurft/gingko-codemirror@0.3.3/src/gingko-codemirror.js
 // @include  https://gingkoapp.com/*
 // @run-at   document-idle
 // ==/UserScript==
