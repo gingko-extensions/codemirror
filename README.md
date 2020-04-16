@@ -1,6 +1,11 @@
 # gingko-codemirror
 turning the default textarea editor in gingkoapp to a codemirror editor
 
+- [x] Vim keybindings
+- [x] Fullscreen support
+- [x] Theme toggling (F8)
+- [x] Theme choose (shift-F8)
+
 ![](doc/gingko-codemirror.gif)
 
 ## How to use

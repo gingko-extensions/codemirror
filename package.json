@@ -1,6 +1,6 @@
 {
   "name": "gingko-codemirror",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "description": "turn gingkoapp editors into codemirror editors",
   "main": "index.js",
   "directories": {
