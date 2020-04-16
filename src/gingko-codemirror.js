@@ -78,6 +78,7 @@ class CodeMirrorManager {
     }
 }
 
+EditorManager.active_card = null;
 EditorManager.editors = new Map();
 EditorManager.fullscreen_editors = new Map();
 EditorManager.stored_history = new Map();
@@ -85,6 +86,7 @@ EditorManager.stored_content = new Map();
 EditorManager.stored_cursor = new Map();
 EditorManager.codemirror_manager = CodeMirrorManager;
 EditorManager.focus_fullscreen = false;
+EditorManager.config = null;
 class EditorManager {
     constructor() {}
 
@@ -92,16 +94,22 @@ class EditorManager {
         return this.codemirror_manager;
     }
 
-    static toggle_fullscreen(id, config) {
+    static toggle_fullscreen() {
+        if (!this.active_card) {
+            throw "must have an active card to toggle fullscreen";
+        }
+
+        const id = this.get_active();
+
         this.focus_fullscreen = !this.focus_fullscreen;
 
         console.log("set fullscreen to " + this.focus_fullscreen);
         if (this.is_fullscreen()) {
-            this.create_fullscreen_editor(id, config);
+            this.create_fullscreen_editor(id);
         }
     }
 
-    static async create_editor(id, config) {
+    static async create_editor(id) {
         const card = document.querySelector("#card" + id);
         await until(() => card.querySelector("textarea"));
 
@@ -110,18 +118,18 @@ class EditorManager {
 
         if (typeof this.get_editor(id) !== "undefined") {
             codemirror = this.get_editor(id);
-            codemirror.setOption("theme", config.theme);
+            codemirror.setOption("theme", this.config.theme);
             codemirror.focus();
         } else {
             codemirror = this.get_codemirror_manager().create_codemirror(
                 textarea,
-                config
+                this.config
             );
             this.set_editor(id, codemirror);
         }
 
         if (this.is_fullscreen()) {
-            this.create_fullscreen_editor(id, config);
+            this.create_fullscreen_editor(id);
         }
 
         this.save_editor(id);
@@ -131,8 +139,8 @@ class EditorManager {
     // this.save_cursor(id);
     }
 
-    static activate_editor(id, config) {
-        this.create_editor(id, config);
+    static activate_editor(id) {
+        this.create_editor(id);
         this.set_active(id);
     }
 
@@ -140,19 +148,19 @@ class EditorManager {
         this.editors.set(id, instance);
     }
 
-    static async create_fullscreen_editor(id, config) {
+    static async create_fullscreen_editor(id) {
         const codemirror = this.get_editor(id);
 
         if (typeof codemirror === "undefined") {
             throw "reference editor must be defined";
         }
 
-        codemirror.setOption("theme", config.theme);
+        codemirror.setOption("theme", this.config.theme);
         let fullscreen_editor = this.get_fullscreen_editor(id);
 
         if (typeof fullscreen_editor !== "undefined") {
             console.log("focus existing fullscreen editor");
-            fullscreen_editor.setOption("theme", config.theme);
+            fullscreen_editor.setOption("theme", this.config.theme);
             fullscreen_editor.focus();
         } else {
             console.log("create new fullscreen editor");
@@ -166,7 +174,7 @@ class EditorManager {
             fullscreen_editor = this.create_fullscreen_codemirror(
                 codemirror,
                 fullscreen_textarea,
-                config
+                this.config
             );
             this.set_fullscreen_editor(id, fullscreen_editor);
         }
@@ -231,7 +239,7 @@ class EditorManager {
         this.stored_cursor.set(id, cursor);
     }
 
-    static close_editor(id) {
+    static deactivate_editor(id) {
         this.restore_editor(id);
 
         const fullscreen_editor = this.get_fullscreen_editor(id);
@@ -240,6 +248,7 @@ class EditorManager {
             fullscreen_editor.toTextArea();
             this.remove_fullscreen_editor(id);
         }
+        this.active_card = null;
         this.disable_fullscreen();
     }
 
@@ -287,28 +296,28 @@ async function waitForAndRun(condition, run) {
     run();
 }
 
-function backboneEvents(config) {
-    EditorManager.config = config;
+function backboneEvents(config, editor_manager) {
+    editor_manager.config = config;
 
     Backbone.on("card:edit", (id) => {
-        EditorManager.activate_editor(id, config);
+        editor_manager.activate_editor(id);
     });
 
     Backbone.on("card:save", (id) => {
-        EditorManager.save_editor(id);
-        EditorManager.close_editor(id);
+        editor_manager.save_editor(id);
+        editor_manager.close_editor(id);
     });
 
     Backbone.on("card:cancel", (id) => {
-        EditorManager.close_editor(id);
+        editor_manager.close_editor(id);
     });
 
     Backbone.on("key:editFullscreen", (_) => {
-        EditorManager.enable_fullscreen();
+        editor_manager.enable_fullscreen();
     });
 
     Backbone.on("key:fullscreen", (_) => {
-        EditorManager.toggle_fullscreen(EditorManager.get_active(), config);
+        editor_manager.toggle_fullscreen(editor_manager.get_active());
     });
 }
 
@@ -316,7 +325,7 @@ function run(config, init) {
     waitForAndRun(
         () => typeof Backbone !== "undefined",
         () => {
-            backboneEvents(config);
+            backboneEvents(config, EditorManager);
         }
     );
 
