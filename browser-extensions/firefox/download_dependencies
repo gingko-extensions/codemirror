@@ -1,0 +1,49 @@
+#! /usr/bin/env python3
+
+import sys
+import json
+import os
+import urllib.request
+import shutil
+
+from pathlib import Path
+
+def main(args):
+
+    file_path = args[1]
+
+    with open(file_path, "r") as f:
+
+        requirements = json.load(f);
+
+        cdn = requirements["cdn"]
+
+        for lib in requirements["libs"]:
+            path = os.path.join("libs", os.path.dirname(lib))
+
+            Path(path).mkdir(parents=True, exist_ok=True)
+
+            url = os.path.join(cdn, lib)
+            file_name = os.path.join("libs", lib)
+
+            with urllib.request.urlopen(url) as response, open(file_name, 'wb') as out_file:
+                shutil.copyfileobj(response, out_file)
+
+        for resource in requirements["resources"]:
+            path = os.path.join("resources", os.path.dirname(resource))
+
+            Path(path).mkdir(parents=True, exist_ok=True)
+
+            url = os.path.join(cdn, resource)
+            file_name = os.path.join("resources", resource)
+
+            try:
+                with urllib.request.urlopen(url) as response, open(file_name, 'wb') as out_file:
+                    shutil.copyfileobj(response, out_file)
+            except urllib.request.HTTPError as e:
+                raise RuntimeError(url) from e
+
+
+if __name__ == "__main__":
+
+    main(sys.argv)

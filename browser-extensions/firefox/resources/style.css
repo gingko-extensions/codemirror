@@ -1,0 +1,30 @@
+.CodeMirror-fullscreen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  height: auto;
+  z-index: 9;
+}
+
+.CodeMirror {
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+      resize: vertical;
+      height: auto;
+      /* overflow: auto !important; */
+}
+/*
+.card .btn-image.btn-save {
+  margin-top: 20px;
+      margin-right: 20px !important;
+}
+*/
+.card.card-active .btn-actions {
+    margin-right: 20px !important;
+    z-index: 9999;
+}
+/*
+.CodeMirror-sizer {
+  margin-bottom: 0 !important;
+}
+*/
+

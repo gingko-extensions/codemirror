@@ -7,7 +7,7 @@
 // @resource 3024-DAY https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/3024-day.min.css
 // @resource 3024-NIGHT https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/3024-night.min.css
 // @resource ABCDEF https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/abcdef.min.css
-// @resource AMBIANCE-MOBILE https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/ambiance-mobile.min.css
+// @resource AMBIANCE-MOBILE https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/ambiance-mobile.css
 // @resource AMBIANCE https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/ambiance.min.css
 // @resource AYU-DARK https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/ayu-dark.min.css
 // @resource AYU-MIRAGE https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/ayu-mirage.min.css
@@ -22,7 +22,7 @@
 // @resource DUOTONE-DARK https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/duotone-dark.min.css
 // @resource DUOTONE-LIGHT https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/duotone-light.min.css
 // @resource ECLIPSE https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/eclipse.min.css
-// @resource ELEGANT https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/elegant.min.css
+// @resource ELEGANT https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/elegant.css
 // @resource ERLANG-DARK https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/erlang-dark.min.css
 // @resource GRUVBOX-DARK https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/gruvbox-dark.min.css
 // @resource HOPSCOTCH https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/hopscotch.min.css
@@ -41,7 +41,7 @@
 // @resource MIDNIGHT https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/midnight.min.css
 // @resource MONOKAI https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/monokai.min.css
 // @resource MOXER https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/moxer.min.css
-// @resource NEAT https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/neat.min.css
+// @resource NEAT https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/neat.css
 // @resource NEO https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/neo.min.css
 // @resource NIGHT https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/night.min.css
 // @resource NORD https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/nord.min.css
@@ -69,7 +69,6 @@
 // @resource ZENBURN https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/zenburn.min.css
 // @resource DIALOG https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/dialog/dialog.min.css
 // @resource MATCHESONSCROLLBAR https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/search/matchesonscrollbar.min.css
-// @require  https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/markdown/markdown.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/display/fullscreen.min.js
@@ -131,7 +130,6 @@ const ALL_THEMES = [
     "duotone-dark",
     "duotone-light",
     "eclipse",
-    "elegant",
     "erlang-dark",
     "gruvbox-dark",
     "hopscotch",
@@ -179,6 +177,8 @@ const ALL_THEMES = [
 ];
 
 const GOOD_THEMES = [
+    "neat",
+    "elegant",
     "3024-day",
     "abcdef",
     "ambiance",
