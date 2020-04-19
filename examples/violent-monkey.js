@@ -69,7 +69,6 @@
 // @resource ZENBURN https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/theme/zenburn.min.css
 // @resource DIALOG https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/dialog/dialog.min.css
 // @resource MATCHESONSCROLLBAR https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/search/matchesonscrollbar.min.css
-// @require  https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/codemirror.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/mode/markdown/markdown.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/display/fullscreen.min.js
