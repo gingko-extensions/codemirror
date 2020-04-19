@@ -23,9 +23,10 @@
         "*://*.gingkoapp.com/*"
       ],
       "js": [
-        "codemirror_base.js",
-        "codemirror_extended.js",
-        "start.js"
+		"js/inject.js",
+        "js/codemirror_base.js",
+        "js/codemirror_extended.js",
+        "js/start.js"
       ]
     }
   ]
