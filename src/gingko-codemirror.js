@@ -41,6 +41,7 @@ class CodeMirrorManager {
 
     static create_fullscreen_codemirror(cm, textarea, config) {
         const linked_doc = cm.getDoc().linkedDoc({ sharedHist: true });
+        linked_doc.setCursor(cm.getDoc().getCursor());
 
         const codeMirror = CodeMirror.fromTextArea(textarea, {
             mode: "markdown",
@@ -160,6 +161,12 @@ class EditorManager {
         // console.log("set fullscreen to " + this.focus_fullscreen);
         if (this.is_fullscreen()) {
             await this.create_fullscreen_editor(id);
+        } else {
+            const editor = this.get_editor(id);
+            editor
+                .getDoc()
+                .setCursor(this.get_fullscreen_editor(id).getDoc().getCursor());
+            this.remove_fullscreen_editor(id);
         }
     }
 
@@ -263,6 +270,7 @@ class EditorManager {
     }
 
     static remove_fullscreen_editor(id) {
+        this.get_fullscreen_editor(id).toTextArea();
         this.fullscreen_editors.delete(id);
     }
 
@@ -299,7 +307,6 @@ class EditorManager {
         const fullscreen_editor = this.get_fullscreen_editor(id);
 
         if (typeof fullscreen_editor !== "undefined") {
-            fullscreen_editor.toTextArea();
             this.remove_fullscreen_editor(id);
         }
         this.active_card = null;
