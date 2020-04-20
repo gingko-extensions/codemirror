@@ -1,34 +1,50 @@
 /* global CodeMirror Backbone */
 
+const DEFAULT_CONF = {
+    mode: "markdown",
+    lineWrapping: true,
+    matchBrackets: true,
+    scrollbarStyle: "null",
+    theme: "default",
+    fullScreen: false,
+    keyMap: "default",
+    autofocus: true,
+};
+
 class CodeMirrorManager {
-    static create_codemirror(textarea, config) {
-        const codeMirrorWrapper = CodeMirror.fromTextArea(textarea, {
-            mode: "markdown",
-            lineWrapping: true,
-            matchBrackets: true,
-            scrollbarStyle: "null",
-            theme: config.theme,
-            fullScreen: false,
-            keyMap: config.keyMap,
-            autofocus: true,
-            extraKeys: {
-                "Shift-F8": function (cm) {
-                    let new_theme = window.prompt("Current theme", cm.getOption("theme"));
+    static configure_codemirror(editor, config) {
+        editor.setOption("theme", config.theme);
+        editor.setOption("keyMap", config.keyMap);
 
-                    cm.setOption("theme", new_theme);
-                    config.theme = new_theme;
-                },
+        editor.setOption("extraKeys", {
+            "Shift-F8": function (cm) {
+                let new_theme = window.prompt("Current theme", cm.getOption("theme"));
 
-                F8: function (cm) {
-                    const theme = config.themes[config.themeIdx];
-                    cm.setOption("theme", theme);
+                cm.setOption("theme", new_theme);
+                config.theme = new_theme;
+            },
 
-                    config.theme = theme;
-                    config.themeIdx = (config.themeIdx + 1) % config.themes.length;
-                },
+            F8: function (cm) {
+                const theme = config.themes[config.themeIdx];
+                cm.setOption("theme", theme);
+
+                config.theme = theme;
+                config.themeIdx = (config.themeIdx + 1) % config.themes.length;
+            },
+            Tab: function (cm) {
+                var spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
+                cm.replaceSelection(spaces);
             },
         });
+    }
+
+    static create_codemirror(textarea, config) {
+        const codeMirrorWrapper = CodeMirror.fromTextArea(textarea, DEFAULT_CONF);
+        this.configure_codemirror(codeMirrorWrapper, config);
+
         codeMirrorWrapper.setSize(null, null);
+
+        unsafeWindow.editor = codeMirrorWrapper;
 
         // reflect changes in the codemirror instance in the
         // wrapped textarea, so that changes get for
@@ -43,36 +59,15 @@ class CodeMirrorManager {
         const linked_doc = cm.getDoc().linkedDoc({ sharedHist: true });
         linked_doc.setCursor(cm.getDoc().getCursor());
 
-        const codeMirror = CodeMirror.fromTextArea(textarea, {
-            mode: "markdown",
-            lineWrapping: true,
-            matchBrackets: true,
-            scrollbarStyle: "null",
-            theme: config.theme,
-            fullScreen: true,
-            keyMap: config.keyMap,
-            autofocus: true,
-            extraKeys: {
-                "Shift-F8": function (cm) {
-                    let new_theme = window.prompt("Current theme", cm.getOption("theme"));
-                    cm.setOption("theme", new_theme);
+        const codeMirror = CodeMirror.fromTextArea(textarea, DEFAULT_CONF);
+        this.configure_codemirror(codeMirror, config);
 
-                    config.theme = new_theme;
-                },
-
-                F8: function (cm) {
-                    const theme = config.themes[config.themeIdx];
-                    cm.setOption("theme", theme);
-
-                    config.theme = theme;
-                    config.themeIdx = (config.themeIdx + 1) % config.themes.length;
-                },
-                F9: function (cm) {
-                    cm.setOption("fullScreen", !cm.getOption("fullScreen"));
-                },
+        codeMirror.setOption("fullScreen", true);
+        codeMirror.addKeyMap({
+            F9: function (cm) {
+                cm.setOption("fullScreen", !cm.getOption("fullScreen"));
             },
         });
-
         codeMirror.swapDoc(linked_doc);
 
         return codeMirror;
@@ -357,8 +352,39 @@ async function waitForAndRun(condition, run) {
     run();
 }
 
+function isValidKeyEvent(args) {
+    if (args.length < 2) {
+        return true;
+    } else {
+        if (args[0] !== "key:tab") {
+            return true;
+        } else {
+            if (args[1] instanceof KeyboardEvent) {
+                if (
+                    args[1].type === "keydown" &&
+          args[1].target.nodeName === "TEXTAREA"
+                ) {
+                    return false;
+                }
+            }
+        }
+    }
+}
+
+function fixTabKeyBehaviour() {
+    var trigger = Backbone.trigger;
+    Backbone.trigger = function (...argse) {
+        var args = Array.from(argse);
+        if (isValidKeyEvent(args)) {
+            trigger.apply(Backbone, args);
+        }
+    };
+}
+
 function backboneEvents(config, editor_manager) {
     editor_manager.config = config;
+
+    fixTabKeyBehaviour();
 
     Backbone.on("card:edit", async (id) => {
         await editor_manager.activate_editor(id);
