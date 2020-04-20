@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name     gingko-codemirror
-// @version  0.3.5
+// @version  0.3.6
 // @noframes
 // @grant    GM_getResourceText
 // @grant    GM_addStyle
@@ -79,7 +79,7 @@
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/search/match-highlighter.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/search/search.min.js
 // @require  https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.52.2/addon/search/searchcursor.min.js
-// @require  https://cdn.jsdelivr.net/gh/gingko-extensions/codemirror@0.3.5/src/gingko-codemirror.js
+// @require  https://cdn.jsdelivr.net/gh/gingko-extensions/codemirror@0.3.6/src/gingko-codemirror.js
 // @include  https://gingkoapp.com/*
 // @run-at   document-idle
 // ==/UserScript==
