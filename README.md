@@ -8,6 +8,19 @@ turning the default textarea editor in gingkoapp to a codemirror editor
 
 ![](doc/gingko-codemirror.gif)
 
+## Gif-Script
+
+- Syntax-Formatting
+  + nice syntax formatting for markdown
+  + theme switching via F8 and Shift-F8
+  + theme choosing via Ctrl-Shift-F8
+
+- Vim-Keybindings and Commands
+  + std-navigation and interaction with different modes
+  + `:w` for saving
+  + `:q` for quitting 
+  + `:wq` for save and quit
+
 ## How to use
 
 Currently I use the `violentmonkey` extension for firefox to load this javascript extension on the gingkoapp website.
