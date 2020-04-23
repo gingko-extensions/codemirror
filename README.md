@@ -3,8 +3,8 @@ turning the default textarea editor in gingkoapp to a codemirror editor
 
 - [x] Vim keybindings
 - [x] Fullscreen support
-- [x] Theme toggling (F8)
-- [x] Theme choose (shift-F8)
+- [x] Theme switching (F8 and Shift-F8)
+- [x] Theme choose (Ctrl-Shift-F8)
 
 ![](doc/gingko-codemirror.gif)
 
@@ -55,7 +55,6 @@ async function waitForRun() {
             theme: "default",
             keyMap: "vim",
             themes: GOOD_THEMES,
-            themeIdx: 0,
         },
         vim_init
     );
