@@ -1,6 +1,13 @@
 /* global CodeMirror Backbone */
 
-const DEFAULT_CONF = {
+const DEFAULT_APP_CONF = {
+    theme: "default",
+    themes: ["default"],
+    themeIdx: 0,
+    keyMap: "default",
+};
+
+const DEFAULT_EDITOR_CONF = {
     mode: "markdown",
     lineWrapping: true,
     matchBrackets: true,
@@ -11,35 +18,49 @@ const DEFAULT_CONF = {
     autofocus: true,
 };
 
+function mod(n, m) {
+    return ((n % m) + m) % m;
+}
+
+function themeChange(operator, cm, config) {
+    config.themeIdx = mod((operator(config.themeIdx, 1)), config.themes.length);
+    const theme = config.themes[config.themeIdx];
+    cm.setOption("theme", theme);
+    config.theme = theme;
+}
+
 class CodeMirrorManager {
+
     static configure_codemirror(editor, config) {
         editor.setOption("theme", config.theme);
         editor.setOption("keyMap", config.keyMap);
-
-        editor.setOption("extraKeys", {
-            "Shift-F8": function (cm) {
+      
+        const extraKeysMap = {
+          
+            "Ctrl-Shift-F8": function (cm) {
                 let new_theme = window.prompt("Current theme", cm.getOption("theme"));
-
+                new_theme = new_theme === null? cm.getOption("theme"): new_theme;
                 cm.setOption("theme", new_theme);
                 config.theme = new_theme;
+                config.themeIdx = Math.max(0, config.themes.indexOf(new_theme));
             },
-
+            "Shift-F8": function (cm) {
+                themeChange((a,b) => a-b, cm, config);
+            },
             F8: function (cm) {
-                const theme = config.themes[config.themeIdx];
-                cm.setOption("theme", theme);
-
-                config.theme = theme;
-                config.themeIdx = (config.themeIdx + 1) % config.themes.length;
+                themeChange((a,b) => a+b, cm, config);
             },
             Tab: function (cm) {
                 var spaces = Array(cm.getOption("indentUnit") + 1).join(" ");
                 cm.replaceSelection(spaces);
             }
-        });
-    }
+        };
+
+        editor.setOption("extraKeys", CodeMirror.normalizeKeyMap(extraKeysMap));
+    }    
 
     static create_codemirror(textarea, config) {
-        const codeMirrorWrapper = CodeMirror.fromTextArea(textarea, DEFAULT_CONF);
+        const codeMirrorWrapper = CodeMirror.fromTextArea(textarea, DEFAULT_EDITOR_CONF);
         this.configure_codemirror(codeMirrorWrapper, config);
 
         codeMirrorWrapper.setSize(null, null);
@@ -59,7 +80,7 @@ class CodeMirrorManager {
         const linked_doc = cm.getDoc().linkedDoc({ sharedHist: true });
         linked_doc.setCursor(cm.getDoc().getCursor());
 
-        const codeMirror = CodeMirror.fromTextArea(textarea, DEFAULT_CONF);
+        const codeMirror = CodeMirror.fromTextArea(textarea, DEFAULT_EDITOR_CONF);
         this.configure_codemirror(codeMirror, config);
 
         codeMirror.setOption("fullScreen", true);
@@ -77,7 +98,7 @@ class CodeMirrorManager {
 class EditorManager {
     constructor() {}
 
-    static init() {
+    static init(config = null) {
         this.active_card = null;
         this.editors = new Map();
         this.fullscreen_editors = new Map();
@@ -86,7 +107,7 @@ class EditorManager {
         this.stored_cursor = new Map();
         this.codemirror_manager = CodeMirrorManager;
         this.focus_fullscreen = false;
-        this.config = null;
+        this.config = config;
     }
     static get active_card() {
         return this._active_card;
@@ -378,8 +399,7 @@ function fixTabKeyBehaviour() {
     };
 }
 
-function backboneEvents(config, editor_manager) {
-    editor_manager.config = config;
+function backboneEvents(editor_manager) {
 
     fixTabKeyBehaviour();
 
@@ -406,11 +426,15 @@ function backboneEvents(config, editor_manager) {
 }
 
 function run(config, init) {
-    EditorManager.init();
+
+    const app_conf = Object.assign(DEFAULT_APP_CONF, config);
+    app_conf.themeIdx = Math.max(0, app_conf.themes.indexOf(app_conf.theme));
+
+    EditorManager.init(app_conf);
     waitForAndRun(
         () => typeof Backbone !== "undefined",
         () => {
-            backboneEvents(config, EditorManager);
+            backboneEvents(EditorManager);
         }
     );
 
