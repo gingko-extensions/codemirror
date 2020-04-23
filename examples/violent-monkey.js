@@ -292,10 +292,9 @@ async function waitForRun() {
 
     run(
         {
-            theme: "default",
+            theme: "ttcn",
             keyMap: "vim",
-            themes: GOOD_THEMES,
-            themeIdx: 0,
+            themes: GOOD_THEMES
         },
         vim_init
     );
