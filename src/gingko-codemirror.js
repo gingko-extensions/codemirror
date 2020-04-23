@@ -353,22 +353,19 @@ async function waitForAndRun(condition, run) {
 }
 
 function isValidKeyEvent(args) {
-    if (args.length < 2) {
-        return true;
-    } else {
-        if (args[0] !== "key:tab") {
-            return true;
-        } else {
-            if (args[1] instanceof KeyboardEvent) {
-                if (
-                    args[1].type === "keydown" &&
-          args[1].target.nodeName === "TEXTAREA"
-                ) {
-                    return false;
-                }
+
+    if (args.length > 1) {
+
+        if (args[0] === "key:tab" && args[1] instanceof KeyboardEvent) {
+            if (
+                args[1].type === "keydown" &&
+                args[1].target.nodeName === "TEXTAREA"
+            ) {
+                return false;
             }
         }
     }
+    return true;
 }
 
 function fixTabKeyBehaviour() {
