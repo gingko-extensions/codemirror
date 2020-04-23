@@ -29,6 +29,27 @@ function themeChange(operator, cm, config) {
     config.theme = theme;
 }
 
+function selectTheme(current_theme, themes) {
+
+    const idx = themes.indexOf(current_theme);
+    const themeCopy = [...themes].map(theme => "   " + theme);
+
+    themeCopy[idx] = "🠖  " + current_theme;
+
+    const theme_string = themeCopy.join("\n");
+
+    let new_theme = window.prompt("Themes: \n\n" + theme_string + "\n\nChoose:", current_theme);
+  
+    new_theme = new_theme === null? current_theme: new_theme;
+  
+    if (themes.indexOf(new_theme) === -1) {
+      
+        window.alert("no valid theme: \"" + new_theme + "\", falling back to \"" + current_theme + "\"");
+        return current_theme;
+    }
+  
+    return new_theme;}
+
 class CodeMirrorManager {
 
     static configure_codemirror(editor, config) {
@@ -38,8 +59,7 @@ class CodeMirrorManager {
         const extraKeysMap = {
           
             "Ctrl-Shift-F8": function (cm) {
-                let new_theme = window.prompt("Current theme", cm.getOption("theme"));
-                new_theme = new_theme === null? cm.getOption("theme"): new_theme;
+                let new_theme = selectTheme(cm.getOption("theme"), config.themes);
                 cm.setOption("theme", new_theme);
                 config.theme = new_theme;
                 config.themeIdx = Math.max(0, config.themes.indexOf(new_theme));
