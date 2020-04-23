@@ -17,6 +17,7 @@ turning the default textarea editor in gingkoapp to a codemirror editor
 
 - Vim-Keybindings and Commands
   + std-navigation and interaction with different modes
+    * e.g. undo, redo, , yank, paste, modes, hjkl-navigation, ...
   + `:w` for saving
   + `:q` for quitting 
   + `:wq` for save and quit
